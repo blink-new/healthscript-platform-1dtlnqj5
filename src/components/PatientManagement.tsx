@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -74,9 +74,24 @@ export function PatientManagement() {
     return unsubscribe
   }, [])
 
+  // Filter patients whenever dependencies change
   useEffect(() => {
-    filterPatients()
-  }, [filterPatients])
+    let filtered = patients
+
+    if (searchTerm) {
+      filtered = filtered.filter(patient => 
+        patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(patient => patient.status === statusFilter)
+    }
+
+    setFilteredPatients(filtered)
+  }, [patients, searchTerm, statusFilter])
 
   const loadPatients = async (practitionerId: string) => {
     try {
@@ -138,24 +153,6 @@ export function PatientManagement() {
       console.error('Error loading patients:', error)
     }
   }
-
-  const filterPatients = useCallback(() => {
-    let filtered = patients
-
-    if (searchTerm) {
-      filtered = filtered.filter(patient => 
-        patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.email.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(patient => patient.status === statusFilter)
-    }
-
-    setFilteredPatients(filtered)
-  }, [patients, searchTerm, statusFilter])
 
   const savePatients = (updatedPatients: Patient[]) => {
     if (user) {
