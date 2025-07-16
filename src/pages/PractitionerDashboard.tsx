@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { blink } from '@/lib/blink'
 import { PatientManagement } from '@/components/PatientManagement'
+import { ProtocolBuilder } from '@/components/ProtocolBuilder'
 
 export function PractitionerDashboard() {
   const [user, setUser] = useState<any>(null)
@@ -120,10 +121,12 @@ export function PractitionerDashboard() {
                   {user.email}
                 </span>
               )}
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                New Protocol
-              </Button>
+              <Link to="/practitioner/protocols">
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Protocol
+                </Button>
+              </Link>
               <Button variant="outline" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
@@ -138,6 +141,11 @@ export function PractitionerDashboard() {
         <Route path="/patients" element={
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <PatientManagement />
+          </div>
+        } />
+        <Route path="/protocols" element={
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <ProtocolBuilder />
           </div>
         } />
       </Routes>
@@ -183,10 +191,12 @@ function DashboardHome({ stats, recentActivity }: {
                 Manage Patients
               </Button>
             </Link>
-            <Button variant="outline" className="w-full justify-start">
-              <FileText className="h-4 w-4 mr-2" />
-              Create Protocol
-            </Button>
+            <Link to="/practitioner/protocols">
+              <Button variant="outline" className="w-full justify-start">
+                <FileText className="h-4 w-4 mr-2" />
+                Create Protocol
+              </Button>
+            </Link>
             <Button variant="outline" className="w-full justify-start">
               <Store className="h-4 w-4 mr-2" />
               Manage Storefront
