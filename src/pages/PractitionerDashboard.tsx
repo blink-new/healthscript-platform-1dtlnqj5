@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -9,10 +10,29 @@ import {
   Plus,
   Activity,
   DollarSign,
-  ShoppingBag
+  ShoppingBag,
+  Stethoscope,
+  LogOut
 } from 'lucide-react'
+import { blink } from '@/lib/blink'
 
 export function PractitionerDashboard() {
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    const unsubscribe = blink.auth.onAuthStateChanged((state) => {
+      setUser(state.user)
+    })
+    return unsubscribe
+  }, [])
+
+  const handleLogout = () => {
+    if (user) {
+      localStorage.removeItem(`user_role_${user.id}`)
+    }
+    blink.auth.logout()
+  }
+
   const stats = [
     {
       title: 'Active Patients',
@@ -58,12 +78,28 @@ export function PractitionerDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-foreground">Practitioner Dashboard</h1>
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                  <Stethoscope className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-foreground">HealthScript</span>
+              </div>
+              <div className="h-6 w-px bg-border" />
+              <h1 className="text-xl font-semibold text-foreground">Practitioner Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
+              {user && (
+                <span className="text-sm text-muted-foreground">
+                  {user.email}
+                </span>
+              )}
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 New Protocol
+              </Button>
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
               </Button>
             </div>
           </div>

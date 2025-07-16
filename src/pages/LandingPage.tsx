@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -10,20 +11,43 @@ import {
   Shield, 
   Zap,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  LogOut
 } from 'lucide-react'
 import { blink } from '@/lib/blink'
 
 export function LandingPage() {
   const [selectedRole, setSelectedRole] = useState<'practitioner' | 'patient' | 'admin' | null>(null)
+  const [user, setUser] = useState<any>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const unsubscribe = blink.auth.onAuthStateChanged((state) => {
+      if (state.user) {
+        const storedRole = localStorage.getItem(`user_role_${state.user.id}`)
+        if (storedRole) {
+          setUser({ ...state.user, role: storedRole })
+          // Redirect to appropriate dashboard
+          navigate(`/${storedRole}`)
+        } else {
+          setUser(state.user)
+        }
+      } else {
+        setUser(null)
+      }
+    })
+    return unsubscribe
+  }, [navigate])
 
   const handleGetStarted = () => {
-    // For now, we'll simulate role selection and redirect to auth
-    if (selectedRole) {
-      blink.auth.login(`/${selectedRole}`)
-    } else {
-      blink.auth.login('/')
+    blink.auth.login('/')
+  }
+
+  const handleLogout = () => {
+    if (user) {
+      localStorage.removeItem(`user_role_${user.id}`)
     }
+    blink.auth.logout()
   }
 
   const roles = [
@@ -98,9 +122,23 @@ export function LandingPage() {
               </div>
               <span className="text-xl font-bold text-foreground">HealthScript</span>
             </div>
-            <Button variant="outline" onClick={() => blink.auth.login()}>
-              Sign In
-            </Button>
+            <div className="flex items-center space-x-4">
+              {user ? (
+                <>
+                  <span className="text-sm text-muted-foreground">
+                    Welcome, {user.email}
+                  </span>
+                  <Button variant="outline" onClick={handleLogout}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Button variant="outline" onClick={handleGetStarted}>
+                  Sign In
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </header>
