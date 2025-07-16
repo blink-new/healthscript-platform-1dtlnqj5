@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { 
@@ -15,9 +15,11 @@ import {
   LogOut
 } from 'lucide-react'
 import { blink } from '@/lib/blink'
+import { PatientManagement } from '@/components/PatientManagement'
 
 export function PractitionerDashboard() {
   const [user, setUser] = useState<any>(null)
+  const location = useLocation()
 
   useEffect(() => {
     const unsubscribe = blink.auth.onAuthStateChanged((state) => {
@@ -32,6 +34,13 @@ export function PractitionerDashboard() {
     }
     blink.auth.logout()
   }
+
+  const navigation = [
+    { name: 'Dashboard', href: '/practitioner', icon: BarChart3 },
+    { name: 'Patients', href: '/practitioner/patients', icon: Users },
+    { name: 'Protocols', href: '/practitioner/protocols', icon: FileText },
+    { name: 'Storefront', href: '/practitioner/storefront', icon: Store },
+  ]
 
   const stats = [
     {
@@ -85,7 +94,25 @@ export function PractitionerDashboard() {
                 <span className="text-xl font-bold text-foreground">HealthScript</span>
               </div>
               <div className="h-6 w-px bg-border" />
-              <h1 className="text-xl font-semibold text-foreground">Practitioner Dashboard</h1>
+              <nav className="flex space-x-8">
+                {navigation.map((item) => {
+                  const isActive = location.pathname === item.href
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        isActive
+                          ? 'text-primary bg-primary/10'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      }`}
+                    >
+                      <item.icon className="h-4 w-4 mr-2" />
+                      {item.name}
+                    </Link>
+                  )
+                })}
+              </nav>
             </div>
             <div className="flex items-center space-x-4">
               {user && (
@@ -108,6 +135,11 @@ export function PractitionerDashboard() {
 
       <Routes>
         <Route path="/" element={<DashboardHome stats={stats} recentActivity={recentActivity} />} />
+        <Route path="/patients" element={
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <PatientManagement />
+          </div>
+        } />
       </Routes>
     </div>
   )
@@ -145,10 +177,12 @@ function DashboardHome({ stats, recentActivity }: {
             <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full justify-start">
-              <Users className="h-4 w-4 mr-2" />
-              Add New Patient
-            </Button>
+            <Link to="/practitioner/patients">
+              <Button variant="outline" className="w-full justify-start">
+                <Users className="h-4 w-4 mr-2" />
+                Manage Patients
+              </Button>
+            </Link>
             <Button variant="outline" className="w-full justify-start">
               <FileText className="h-4 w-4 mr-2" />
               Create Protocol
