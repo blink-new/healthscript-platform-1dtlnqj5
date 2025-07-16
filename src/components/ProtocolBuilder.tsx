@@ -594,13 +594,26 @@ export function ProtocolBuilder() {
                         variant="ghost"
                         size="sm"
                         onClick={() => duplicateProtocol(protocol)}
+                        title="Duplicate protocol"
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => {
+                          // Navigate to communications page with protocol pre-selected
+                          window.location.href = `/practitioner/communications?protocol=${protocol.id}`
+                        }}
+                        title="Send to patient"
+                      >
+                        <Share className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => deleteProtocol(protocol.id)}
+                        title="Delete protocol"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

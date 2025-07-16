@@ -17,6 +17,7 @@ import {
 import { blink } from '@/lib/blink'
 import { PatientManagement } from '@/components/PatientManagement'
 import { ProtocolBuilder } from '@/components/ProtocolBuilder'
+import { ProtocolSender } from '@/components/ProtocolSender'
 
 export function PractitionerDashboard() {
   const [user, setUser] = useState<any>(null)
@@ -40,6 +41,7 @@ export function PractitionerDashboard() {
     { name: 'Dashboard', href: '/practitioner', icon: BarChart3 },
     { name: 'Patients', href: '/practitioner/patients', icon: Users },
     { name: 'Protocols', href: '/practitioner/protocols', icon: FileText },
+    { name: 'Communications', href: '/practitioner/communications', icon: Activity },
     { name: 'Storefront', href: '/practitioner/storefront', icon: Store },
   ]
 
@@ -146,6 +148,11 @@ export function PractitionerDashboard() {
         <Route path="/protocols" element={
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <ProtocolBuilder />
+          </div>
+        } />
+        <Route path="/communications" element={
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <ProtocolSender />
           </div>
         } />
       </Routes>

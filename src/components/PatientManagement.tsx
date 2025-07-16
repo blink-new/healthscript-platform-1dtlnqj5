@@ -23,7 +23,8 @@ import {
   AlertTriangle,
   Pill,
   FileText,
-  Filter
+  Filter,
+  Send
 } from 'lucide-react'
 import { blink } from '@/lib/blink'
 
@@ -412,8 +413,20 @@ export function PatientManagement() {
                           setSelectedPatient(patient)
                           setIsViewDialogOpen(true)
                         }}
+                        title="View patient details"
                       >
                         <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          // Navigate to communications page with patient pre-selected
+                          window.location.href = `/practitioner/communications?patient=${patient.id}`
+                        }}
+                        title="Send protocol to patient"
+                      >
+                        <Send className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -422,6 +435,7 @@ export function PatientManagement() {
                           setSelectedPatient(patient)
                           setIsEditDialogOpen(true)
                         }}
+                        title="Edit patient"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -429,6 +443,7 @@ export function PatientManagement() {
                         variant="ghost"
                         size="sm"
                         onClick={() => deletePatient(patient.id)}
+                        title="Delete patient"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
